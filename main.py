@@ -26,7 +26,7 @@ def obtener_destinos(data: CategoriaRequest):
     destinos = obtener_destinos_por_categoria(db, data.categoria)
 
     if not destinos:
-        respuesta_gemini = consultar_gemini(f"Dame información sobre destinos turísticos en la categoría {data.categoria}")
+        respuesta_gemini = consultar_gemini(f"Dame información sobre destinos turísticos en la categoría {data.categoria}")        
         return {"respuesta_gemini": respuesta_gemini}
 
     return destinos
