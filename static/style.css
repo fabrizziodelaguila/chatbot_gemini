@@ -55,4 +55,5 @@ button:hover {
     background: #e9ecef;
     border-radius: 5px;
     min-height: 50px;
+    text-align: left;
 }
