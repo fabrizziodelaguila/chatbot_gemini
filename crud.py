@@ -12,7 +12,7 @@ def consultar_gemini(pregunta):
 Eres un bot para responder las dudas de las personas acerca de vuelos y sobre responder a temas acerca de vuelos y/o aeropuertos. Cualquier otra duda será invalidad y pedirás al usuario que haga preguntas relacionadas a vuelos y viajes.
 Serás amigable y profesional al momento de responder. Tendrás paciencia con los usuarios.
 No utilices asteriscos.
-Ahora escribiré mi mensaje: \r"""
+Ahora escribiré mi mensaje: \n"""
     respuesta = model.generate_content(prompt+pregunta)
     return respuesta.text
 
