@@ -17,6 +17,15 @@ DB_FLY_DESTINY = [
     {k: v for k, v in x.items() if k not in DB_FLY_NOT_NAMES}
     for x in DB_FLY
 ]
+
+for i in DB_FLY_DESTINY:
+    for k,v in i.items():
+        if k == "duration":
+            v = f"{v} hours"
+        if k == "price":
+            v = f"{v} Nuevos Soles Peruanos"
+        if k == "rating":
+            v = f"{v}/5.0"
 # DB_FLY = l = [ i["name"] for i in DB_CAT['categories']]
 
 def consultar_gemini(pregunta):
