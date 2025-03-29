@@ -7,7 +7,13 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def consultar_gemini(pregunta):
     model = genai.GenerativeModel("gemini-2.0-flash")
-    respuesta = model.generate_content(pregunta)
+    prompt = """Estas son la caracteristicas que debes seguir cuando vayas a responder:
+    Responderás a los mensajes con un limite de 512 caracteres. Trata de ser concisa, resumida y responder de manera directa y amigable.
+Eres un bot para responder las dudas de las personas acerca de vuelos y sobre responder a temas acerca de vuelos y/o aeropuertos. Cualquier otra duda será invalidad y pedirás al usuario que haga preguntas relacionadas a vuelos y viajes.
+Serás amigable y profesional al momento de responder. Tendrás paciencia con los usuarios.
+No utilices asteriscos.
+Ahora escribiré mi mensaje: \r"""
+    respuesta = model.generate_content(prompt+pregunta)
     return respuesta.text
 
 def obtener_destinos_por_categoria(db, categoria):
