@@ -33,7 +33,7 @@ from history_chat import get_chat_history,save_chat_history
 def consultar_gemini(pregunta,user_id = DEFAULT_GUESTKEY): # Funcion que realiza la consulta al modelo Gemini.
     model = genai.GenerativeModel("gemini-2.0-flash")
 
-    prompt = f"""Estas son la caracteristicas que debes seguir cuando vayas a responder:
+    base_prompt = f"""Estas son la caracteristicas que debes seguir cuando vayas a responder:
     Responderás a los mensajes con un limite de 2048     caracteres. Trata de ser resumido y responder de manera directa y amigable.
 Eres un bot para responder las dudas de las personas acerca de vuelos de viajes y sobre responder a temas acerca de vuelos y/o aeropuertos. Cualquier otra duda será invalida y pedirás al usuario que haga preguntas relacionadas a vuelos, viajes o sus categorias disponibles.
 Serás amigable y profesional al momento de responder. Tendrás paciencia con los usuarios.
@@ -42,18 +42,29 @@ Estos son los viajes disponibles. Estan en un json: {DB_FLY_DESTINY}. Sus duraci
 Ahora escribiré mi mensaje: \n"""
     
     # Consulta para usario sin registrar
-    # if user_id == DEFAULT_GUESTKEY:
-    respuesta = model.generate_content(prompt+pregunta) # Genera la respuesta del modelo Gemini.
-    return respuesta.text
+    if user_id == DEFAULT_GUESTKEY:
+        respuesta = model.generate_content(base_prompt+pregunta) # Genera la respuesta del modelo Gemini.
+        return respuesta.text
         
-    # Cuando se coloca esto, en la consola sale internal error
-    history = get_chat_history(user_id)
-    context = "\n".join([f"Usuario: {m[0]}\nBot: {m[1]}" for m in history])
-    respuesta = model.generate_content(f"Contexto: {context}\nPrompt: {prompt}\nUsuario{pregunta}") # Genera la respuesta del modelo Gemini.
-
-    save_chat_history(user_id,pregunta,respuesta.text)
-
-    return respuesta.text
+    try:
+        # Obtener historial y crear contexto
+        history = get_chat_history(user_id)
+        if history:
+            context = "\n".join([f"Usuario: {m[0]}\nBot: {m[1]}" for m in history])
+            full_prompt = f"{base_prompt}\nHistorial previo:\n{context}\n\nNueva pregunta: {pregunta}"
+        else:
+            full_prompt = base_prompt + pregunta
+            
+        respuesta = model.generate_content(full_prompt)
+        
+        # Guardar la nueva interacción
+        save_chat_history(user_id, pregunta, respuesta.text)
+        
+        return respuesta.text
+        
+    except Exception as e:
+        print(f"Error al procesar la consulta: {str(e)}")
+        return "Lo siento, ha ocurrido un error al procesar tu consulta."
 
 def obtener_destinos_por_categoria(db, categoria):
     query = """
