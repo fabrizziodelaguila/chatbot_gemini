@@ -28,8 +28,12 @@ for i in DB_FLY_DESTINY:
             v = f"{v}/5.0"
 # DB_FLY = l = [ i["name"] for i in DB_CAT['categories']]
 
+
+
+
 def consultar_gemini(pregunta):
     model = genai.GenerativeModel("gemini-2.0-flash")
+
     prompt = f"""Estas son la caracteristicas que debes seguir cuando vayas a responder:
     Responderás a los mensajes con un limite de 2048     caracteres. Trata de ser resumido y responder de manera directa y amigable.
 Eres un bot para responder las dudas de las personas acerca de vuelos de viajes y sobre responder a temas acerca de vuelos y/o aeropuertos. Cualquier otra duda será invalida y pedirás al usuario que haga preguntas relacionadas a vuelos, viajes o sus categorias disponibles.
@@ -37,6 +41,9 @@ Serás amigable y profesional al momento de responder. Tendrás paciencia con lo
 No utilices asteriscos. Estas son las categorias de viaje: {DB_CAT_NAMES}.
 Estos son los viajes disponibles. Estan en un json: {DB_FLY_DESTINY}. Sus duraciones en "duration" están en horas.
 Ahora escribiré mi mensaje: \n"""
+    
+    
+
     respuesta = model.generate_content(prompt+pregunta)
     return respuesta.text
 

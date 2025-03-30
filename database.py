@@ -13,3 +13,5 @@ def get_db():
         f'PWD={os.getenv("AZURE_PASSWORD")}'
     )
     return conn
+if __name__ == "__main__":
+    conn = get_db()
