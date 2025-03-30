@@ -13,10 +13,7 @@ DB_CAT_NAMES = l = [ i["name"] for i in DB_CAT['categories']]
 call_vuelos = requests.get("https://vuelosapi-e8e4cke5aubjdnah.canadacentral-01.azurewebsites.net/api/destinos")
 DB_FLY_NOT_NAMES = ["image","categoria_id","id","location"]
 DB_FLY = call_vuelos.json()
-DB_FLY_DESTINY = [
-    {k: v for k, v in x.items() if k not in DB_FLY_NOT_NAMES}
-    for x in DB_FLY
-]
+DB_FLY_DESTINY = [ {k: v for k, v in x.items() if k not in DB_FLY_NOT_NAMES} for x in DB_FLY ]
 
 for i in DB_FLY_DESTINY:
     for k,v in i.items():
@@ -29,9 +26,11 @@ for i in DB_FLY_DESTINY:
 # DB_FLY = l = [ i["name"] for i in DB_CAT['categories']]
 
 
+DEFAULT_GUESTKEY = "BXvBKa30BZW7TkT20GJLB9Ydryf69ADpWBL2cl71l8uhMezIhb"
 
+from history_chat import get_chat_history,save_chat_history
 
-def consultar_gemini(pregunta):
+def consultar_gemini(pregunta,user_id = DEFAULT_GUESTKEY): # Funcion que realiza la consulta al modelo Gemini.
     model = genai.GenerativeModel("gemini-2.0-flash")
 
     prompt = f"""Estas son la caracteristicas que debes seguir cuando vayas a responder:
@@ -42,9 +41,18 @@ No utilices asteriscos. Estas son las categorias de viaje: {DB_CAT_NAMES}.
 Estos son los viajes disponibles. Estan en un json: {DB_FLY_DESTINY}. Sus duraciones en "duration" están en horas.
 Ahora escribiré mi mensaje: \n"""
     
-    
+    # Consulta para usario sin registrar
+    # if user_id == DEFAULT_GUESTKEY:
+    respuesta = model.generate_content(prompt+pregunta) # Genera la respuesta del modelo Gemini.
+    return respuesta.text
+        
+    # Cuando se coloca esto, en la consola sale internal error
+    history = get_chat_history(user_id)
+    context = "\n".join([f"Usuario: {m[0]}\nBot: {m[1]}" for m in history])
+    respuesta = model.generate_content(f"Contexto: {context}\nPrompt: {prompt}\nUsuario{pregunta}") # Genera la respuesta del modelo Gemini.
 
-    respuesta = model.generate_content(prompt+pregunta)
+    save_chat_history(user_id,pregunta,respuesta.text)
+
     return respuesta.text
 
 def obtener_destinos_por_categoria(db, categoria):

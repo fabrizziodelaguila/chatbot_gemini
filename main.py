@@ -24,20 +24,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class CategoriaRequest(BaseModel):
+class ChatRequest(BaseModel): # El modelo debe almacenar el userid para las sesiones.
     categoria: str
+    #user_id: int
 
 @app.get("/")
 def home():
     return {"message": "API funcionando"}
 
 @app.post("/chat")
-def obtener_destinos(data: CategoriaRequest):
+def obtener_destinos(data: ChatRequest):
     db = get_db()
     destinos = obtener_destinos_por_categoria(db, data.categoria)
 
-    if not destinos:
-        respuesta_gemini = consultar_gemini(f"{data.categoria}")        
+    if not destinos:    # So lo ingresado por el usuario no existe. Se consulta a Gemini.
+        respuesta_gemini = consultar_gemini(f"{data.categoria}",1)        
         return {"respuesta_gemini": respuesta_gemini}
 
     return destinos
