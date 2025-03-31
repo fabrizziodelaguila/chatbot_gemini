@@ -26,6 +26,13 @@ for i in DB_FLY_DESTINY:
 # DB_FLY = l = [ i["name"] for i in DB_CAT['categories']]
 
 
+call_dato_vuelos = requests.get("https://vuelosapi-e8e4cke5aubjdnah.canadacentral-01.azurewebsites.net/api/vuelos")
+DB_FLY_NO_DATA = ["id"]
+
+DB_FLY_DATA = call_dato_vuelos.json()
+
+DB_FLY_F_DATA = [ {k: v for k, v in x.items() if k not in DB_FLY} for x in DB_FLY_DATA ]
+
 DEFAULT_GUESTKEY = "BXvBKa30BZW7TkT20GJLB9Ydryf69ADpWBL2cl71l8uhMezIhb"
 
 from history_chat import get_chat_history,save_chat_history
@@ -34,24 +41,28 @@ def consultar_gemini(pregunta,user_id = DEFAULT_GUESTKEY): # Funcion que realiza
     model = genai.GenerativeModel("gemini-2.0-flash")
 
     base_prompt = f"""Estas son la caracteristicas que debes seguir cuando vayas a responder:
-    Responderás a los mensajes con un limite de 2048     caracteres. Trata de ser resumido y responder de manera directa y amigable.
+    Responderás a los mensajes con un limite de 2048 caracteres. Trata de ser resumido y responder de manera directa y amigable.
 Eres un bot para responder las dudas de las personas acerca de vuelos de viajes y sobre responder a temas acerca de vuelos y/o aeropuertos. Cualquier otra duda será invalida y pedirás al usuario que haga preguntas relacionadas a vuelos, viajes o sus categorias disponibles.
 Serás amigable y profesional al momento de responder. Tendrás paciencia con los usuarios.
 No utilices asteriscos. Estas son las categorias de viaje: {DB_CAT_NAMES}.
-Estos son los viajes disponibles. Estan en un json: {DB_FLY_DESTINY}. Sus duraciones en "duration" están en horas.
+Estos son los viajes disponibles, Estan en un json: {DB_FLY_DESTINY}. 
+Estos son los datos de los vuelos: {DB_FLY_F_DATA}.
 Ahora escribiré mi mensaje: \n"""
     
     # Consulta para usario sin registrar
     if user_id == DEFAULT_GUESTKEY:
+        print("Default Guest")
         respuesta = model.generate_content(base_prompt+pregunta) # Genera la respuesta del modelo Gemini.
         return respuesta.text
         
     try:
+        print("User registered")
         # Obtener historial y crear contexto
         history = get_chat_history(user_id)
+        print(user_id)
         if history:
             context = "\n".join([f"Usuario: {m[0]}\nBot: {m[1]}" for m in history])
-            full_prompt = f"{base_prompt}\nHistorial previo:\n{context}\n\nNueva pregunta: {pregunta}"
+            full_prompt = f"{base_prompt}\nHistorial del chat previo:\n{context}\n\nNuevo mensaje: {pregunta}"
         else:
             full_prompt = base_prompt + pregunta
             

@@ -1,3 +1,4 @@
+from ctypes import Union
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from database import get_db
@@ -8,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse, HTMLResponse
 import os
 from fastapi.middleware.cors import CORSMiddleware
-
+from typing import Union
 app = FastAPI()
 
 
@@ -26,7 +27,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel): # El modelo debe almacenar el userid para las sesiones.
     categoria: str
-    #user_id: int
+    userId: Union[int, str]
 
 @app.get("/")
 def home():
@@ -38,7 +39,7 @@ def obtener_destinos(data: ChatRequest):
     destinos = obtener_destinos_por_categoria(db, data.categoria)
 
     if not destinos:    # So lo ingresado por el usuario no existe. Se consulta a Gemini.
-        respuesta_gemini = consultar_gemini(f"{data.categoria}",1)        
+        respuesta_gemini = consultar_gemini(f"{data.categoria}",data.userId)        
         return {"respuesta_gemini": respuesta_gemini}
 
     return destinos
