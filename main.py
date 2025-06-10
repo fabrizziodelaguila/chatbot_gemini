@@ -40,45 +40,37 @@ class RegisterRequest(BaseModel):
 
 def crear_token(user_id, username):
     payload = {
-        "id": user_id,  # Este campo es esencial para el historial del chat
+        "id": user_id,
         "username": username,
         "iat": int(time.time()),
         "exp": int(time.time()) + 3600
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    print("🛡️ Token generado:", token)  # 👈 Agregado para depurar
     return token
 
 def get_current_user(request: Request):
     auth_header = request.headers.get("Authorization")
-    print("🔐 Authorization header recibido:", auth_header)
 
     if not auth_header:
-        print("❌ No Authorization header found")
         raise HTTPException(status_code=403, detail="Token requerido")
 
     try:
         scheme, token = auth_header.split(" ")
-        print("📦 Token extraído:", token)
     except ValueError as e:
-        print("❌ Error al dividir el Authorization header:", e)
         raise HTTPException(status_code=403, detail="Formato del token inválido")
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print("📨 Payload decodificado:", payload)
 
         username = payload.get("username")
         user_id = payload.get("id")
 
         if username is None or user_id is None:
-            print("❌ Faltan campos en el payload (¿token viejo?)")
             raise HTTPException(status_code=403, detail="Token inválido")
 
         return {"username": username, "user_id": user_id}
 
     except JWTError as e:
-        print("❌ Error al decodificar el token JWT:", e)
         raise HTTPException(status_code=403, detail="Token inválido")
 
 @app.get("/")
