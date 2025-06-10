@@ -1,1 +1,30 @@
+# Archivos de configuración y secretos
 .env
+*.env
+
+# Historial de chat y archivos de datos temporales
+chat_history.json
+*.json
+
+# Archivos de dependencias y entornos virtuales
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+
+# Archivos del sistema y del editor
+.DS_Store
+Thumbs.db
+
+# Archivos de log
+*.log
+
+# Archivos de configuración de VS Code
+.vscode/
+
+# Otros archivos ocultos (excepto .gitignore)
+.*
+!.gitignore

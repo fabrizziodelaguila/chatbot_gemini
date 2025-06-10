@@ -8,9 +8,20 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <!-- Perfil del usuario -->
+    <div class="profile-container">
+        <div id="profileCircle"></div>
+        <span id="profileName"></span>
+    </div>
     <h1>Consulta con Gemini</h1>
     <input type="text" id="pregunta" placeholder="Escribe tu pregunta aquí...">
     <button id="enviar">Enviar</button>
     <p id="respuesta" align="left"></p>
+    <script>
+      // Mostrar la inicial y el nombre del usuario
+      const username = localStorage.getItem("username") || "";
+      document.getElementById("profileCircle").innerText = username.charAt(0).toUpperCase();
+      document.getElementById("profileName").innerText = username;
+    </script>
 </body>
 </html>

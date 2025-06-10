@@ -1,59 +1,54 @@
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-/* Estilo general */
 body {
+    font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    color: #333;
-    text-align: center;
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-/* Contenedor principal */
 .container {
-    max-width: 600px;
-    margin: 50px auto;
     background: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
 }
 
-/* Input y botón */
+h2 {
+    margin-bottom: 15px;
+}
+
 input {
-    width: 80%;
+    width: 90%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 16px;
 }
 
 button {
-    background-color: #007bff;
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
     color: white;
-    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #218838;
 }
 
-/* Área de respuesta */
-#respuesta {
-    margin-top: 20px;
-    padding: 10px;
-    background: #e9ecef;
-    border-radius: 5px;
-    min-height: 50px;
-    text-align: left;
+.gray-text {
+    color: gray;
+    font-size: 14px;
+}
+
+#error-message, #loginMsg, #registerMsg {
+    color: red;
+    font-size: 14px;
 }

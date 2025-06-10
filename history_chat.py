@@ -1,26 +1,26 @@
-from database import get_db
-from typing import NewType
+import json
+import os
 
-UserID = NewType("UserID",int)
+HISTORY_FILE = "chat_history.json"
 
-def save_chat_history(user_id, message, response):
-    db = get_db()
-    cursor = db.cursor()
-    query = """
-    INSERT INTO chat_history (user_id, message, response, timestamp)
-    VALUES (?, ?, ?, GETDATE())
-    """
-    cursor.execute(query, (user_id, message, response))
-    db.commit()
+def load_data():
+    if not os.path.exists(HISTORY_FILE):
+        return {}
+    with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 def get_chat_history(user_id):
-    db = get_db()
-    cursor = db.cursor()
-    query = """
-    SELECT top 5 message, response 
-    FROM chat_history 
-    WHERE user_id = ? 
-    ORDER BY timestamp DESC 
-    """
-    cursor.execute(query, (user_id,))
-    return cursor.fetchall()
+    data = load_data()
+    return data.get(str(user_id), [])
+
+def save_chat_history(user_id, question, answer):
+    data = load_data()
+    uid = str(user_id)
+    if uid not in data:
+        data[uid] = []
+    data[uid].append([question, answer])
+    save_data(data)
