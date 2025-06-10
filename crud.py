@@ -10,9 +10,9 @@ call_cat = requests.get("https://vuelosapi-e8e4cke5aubjdnah.canadacentral-01.azu
 DB_CAT = call_cat.json()
 DB_CAT_NAMES = l = [ i["name"] for i in DB_CAT['categories']]
 
-call_vuelos = requests.get("https://vuelosapi-e8e4cke5aubjdnah.canadacentral-01.azurewebsites.net/api/destinos")
+call_dest = requests.get("https://vuelosapi-e8e4cke5aubjdnah.canadacentral-01.azurewebsites.net/api/destinos")
 DB_FLY_NOT_NAMES = ["image","categoria_id","id","location"]
-DB_FLY = call_vuelos.json()
+DB_FLY = call_dest.json()
 DB_FLY_DESTINY = [ {k: v for k, v in x.items() if k not in DB_FLY_NOT_NAMES} for x in DB_FLY ]
 
 for i in DB_FLY_DESTINY:
